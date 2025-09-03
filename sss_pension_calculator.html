@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>SSS Pension Calculator - Compute Your Retirement Benefits</title>
+	<meta name="description" content="Calculate your SSS pension benefits easily with our free online calculator. Get accurate estimates based on your contributions and years of service.">
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+			line-height: 1.6;
+			color: #333;
+			background: linear-gradient(135deg, #007C80 0%, #003d3f  100%);
+			min-height: 100vh;
+		}
+
+		.container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 0 20px;
+		}
+
+		/* Hero Section */
+		.hero {
+			background: linear-gradient(135deg, #007C80 0%, #003d3f  100%);
+			color: white;
+			padding: 80px 0 60px;
+			text-align: center;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.hero::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+			opacity: 0.1;
+		}
+
+		.hero-content {
+			position: relative;
+			z-index: 2;
+		}
+
+		.hero h1 {
+			font-size: clamp(2.5rem, 5vw, 4rem);
+			font-weight: 800;
+			margin-bottom: 20px;
+			letter-spacing: -0.02em;
+		}
+
+		.hero p {
+			font-size: 1.25rem;
+			opacity: 0.9;
+			max-width: 600px;
+			margin: 0 auto 40px;
+		}
+
+		.cta-button {
+			display: inline-block;
+			background: #ff6b6b;
+			color: white;
+			padding: 15px 30px;
+			border-radius: 50px;
+			text-decoration: none;
+			font-weight: 600;
+			font-size: 1.1rem;
+			transition: all 0.3s ease;
+			box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+		}
+
+		.cta-button:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 15px 40px rgba(255, 107, 107, 0.4);
+		}
+
+		/* Calculator Section */
+		.calculator {
+			background: white;
+			margin: -40px 20px 0;
+			border-radius: 20px;
+			box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+			padding: 40px;
+			position: relative;
+			z-index: 3;
+		}
+
+		.calculator h2 {
+			text-align: center;
+			margin-bottom: 30px;
+			color: #333;
+			font-size: 2rem;
+		}
+
+		.form-section {
+			margin-bottom: 30px;
+		}
+
+		.form-section h3 {
+			color: #007C80;
+			margin-bottom: 15px;
+			font-size: 1.3rem;
+		}
+
+		.input-group {
+			margin-bottom: 20px;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 8px;
+			font-weight: 600;
+			color: #555;
+		}
+
+		input {
+			width: 100%;
+			padding: 12px 15px;
+			border: 2px solid #e1e5e9;
+			border-radius: 10px;
+			font-size: 1rem;
+			transition: border-color 0.3s ease;
+		}
+
+		input:focus {
+			outline: none;
+			border-color: #007C80;
+			box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+		}
+
+		.contributions-table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 10px;
+		}
+
+		.contributions-table th,
+		.contributions-table td {
+			padding: 15px;
+			text-align: left;
+			border-bottom: 1px solid #e1e5e9;
+		}
+
+		.contributions-table th {
+			background: #f8f9fa;
+			font-weight: 600;
+			color: #007C80;
+		}
+
+		.contributions-table input {
+			border: 1px solid #e1e5e9;
+			padding: 8px 12px;
+			border-radius: 6px;
+			width: 100%;
+		}
+
+		.calculate-btn {
+			background: linear-gradient(135deg, #007C80 0%, #764ba2 100%);
+			color: white;
+			padding: 15px 40px;
+			border: none;
+			border-radius: 10px;
+			font-size: 1.1rem;
+			font-weight: 600;
+			cursor: pointer;
+			width: 100%;
+			transition: all 0.3s ease;
+			margin-top: 20px;
+		}
+
+		.calculate-btn:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+		}
+
+		.results {
+			background: linear-gradient(135deg, #007C80 0%, #764ba2 100%);
+			color: white;
+			padding: 30px;
+			border-radius: 15px;
+			margin-top: 30px;
+			display: none;
+		}
+
+		.results.show {
+			display: block;
+			animation: fadeInUp 0.5s ease;
+		}
+
+		@keyframes fadeInUp {
+			from {
+				opacity: 0;
+				transform: translateY(20px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		.result-item {
+			background: rgba(255, 255, 255, 0.1);
+			padding: 15px;
+			border-radius: 10px;
+			margin-bottom: 15px;
+			backdrop-filter: blur(10px);
+		}
+
+		.result-item h4 {
+			margin-bottom: 5px;
+			font-size: 1.1rem;
+		}
+
+		.result-amount {
+			font-size: 1.5rem;
+			font-weight: 700;
+			color: #fff;
+		}
+
+		.final-pension {
+			background: #ff6b6b;
+			color: white;
+			padding: 20px;
+			border-radius: 10px;
+			text-align: center;
+			margin-top: 20px;
+		}
+
+		.final-pension h3 {
+			margin-bottom: 10px;
+		}
+
+		.final-amount {
+			font-size: 2.5rem;
+			font-weight: 800;
+		}
+
+		/* Info Section */
+		.info {
+			background: #f8f9fa;
+			padding: 60px 0;
+			margin-top: 60px;
+		}
+
+		.info-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+			gap: 30px;
+		}
+
+		.info-card {
+			background: white;
+			padding: 30px;
+			border-radius: 15px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+		}
+
+		.info-card h3 {
+			color: #007C80;
+			margin-bottom: 15px;
+			font-size: 1.3rem;
+		}
+
+		.info-card p {
+			color: #666;
+			line-height: 1.7;
+		}
+
+		/* Footer */
+		.footer {
+			background: #333;
+			color: white;
+			text-align: center;
+			padding: 40px 0;
+		}
+
+		.footer p {
+			opacity: 0.8;
+		}
+
+		/* Mobile Responsiveness */
+		@media (max-width: 768px) {
+			.calculator {
+				margin: -40px 10px 0;
+				padding: 30px 20px;
+			}
+
+			.contributions-table {
+				font-size: 0.9rem;
+			}
+
+			.contributions-table th,
+			.contributions-table td {
+				padding: 10px 8px;
+			}
+
+			.hero {
+				padding: 60px 0 40px;
+			}
+
+			.info {
+				padding: 40px 0;
+			}
+
+			#pension_result {
+				flex-wrap:wrap;
+			}
+		}
+
+		@media (max-width: 912px) {
+
+			#pension_result {
+				flex-wrap:wrap;
+			}
+		}
+
+		.disclaimer {
+			background: #fff3cd;
+			border: 1px solid #ffeaa7;
+			border-radius: 10px;
+			padding: 20px;
+			margin: 30px 0;
+			color: #856404;
+		}
+
+		.disclaimer h4 {
+			margin-bottom: 10px;
+			color: #7d5a0d;
+		}
+	</style>
+</head>
+<body>
+	<!-- Hero Section -->
+	<section class="hero">
+		<div class="container">
+			<div class="hero-content">
+				<h1>SSS Pension Calculator</h1>
+				<p>Calculate your Social Security System pension benefits quickly and accurately. Get instant estimates based on your contributions and years of service.</p>
+				<a style='margin: 10px' href="#calculator" class="cta-button">Calculate My Pension</a>
+			</div>
+		</div>
+	</section>
+
+	<!-- Calculator Section -->
+	<section class="calculator" id="calculator">
+		<div class="container">
+			<h2>SSS Pension Calculator</h2>
+
+			<div id='pension_result' style="display: flex; align-content: space-between;justify-content: space-around; gap: 30px;">
+
+				<form id="pensionForm">
+					<div class="form-section">
+						<h3>📊 Contribution History (Last 5 Years)</h3>
+						<p style="color: #666; margin-bottom: 20px;">Enter your total monthly salary credit for each year. Leave blank if no contribution for that year.</p>
+
+						<table class="contributions-table">
+							<thead>
+								<tr>
+									<th>Year</th>
+									<th>Total Monthly Salary Credit (₱) <a href='https://www.sss.gov.ph/sss-contribution-table/'>source</a></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td><strong>2025</strong></td>
+									<td><input value='60000' type="text" id="year2025" placeholder="0.00" min="0" step="0.01"></td>
+								</tr>
+								<tr>
+									<td><strong>2024</strong></td>
+									<td><input value='60000' type="text" id="year2024" placeholder="0.00" min="0" step="0.01"></td>
+								</tr>
+								<tr>
+									<td><strong>2023</strong></td>
+									<td><input value='60000' type="text" id="year2023" placeholder="0.00" min="0" step="0.01"></td>
+								</tr>
+								<tr>
+									<td><strong>2022</strong></td>
+									<td><input value='60000' type="text" id="year2022" placeholder="0.00" min="0" step="0.01"></td>
+								</tr>
+								<tr>
+									<td><strong>2021</strong></td>
+									<td><input value='60000' type="text" id="year2021" placeholder="0.00" min="0" step="0.01"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<div class="form-section">
+						<h3>🗓️ Service Information</h3>
+						<div class="input-group">
+							<label for="cys">Credited Years of Service (CYS)</label>
+							<input type="number" id="cys" placeholder="Enter number of years e.g. 10" min="1" max="50" required value=10>
+							<small style="color: #666;">Total number of years you've made contributions to SSS</small>
+						</div>
+					</div>
+
+					<button type="submit" class="calculate-btn">Calculate My Pension</button>
+				</form>
+
+				<div id="results" class="results">
+					<h3>Your Pension Calculation Results</h3>
+
+					<div class="result-item">
+						<h4>Average Monthly Salary Credit (AMSC)</h4>
+						<div class="result-amount" id="amscResult">₱0.00</div>
+					</div>
+
+					<div class="result-item">
+						<h4>Formula A: 300 + (20% × AMSC) + (2% × AMSC) × (CYS - 10)</h4>
+						<div class="result-amount" id="formulaA">₱0.00</div>
+					</div>
+
+					<div class="result-item">
+						<h4>Formula B: 40% × AMSC</h4>
+						<div class="result-amount" id="formulaB">₱0.00</div>
+					</div>
+
+					<div class="result-item">
+						<h4>Formula C: Minimum Pension</h4>
+						<div class="result-amount" id="formulaC">₱0.00</div>
+					</div>
+
+					<div class="final-pension">
+						<h3>Your Monthly Pension</h3>
+						<div class="final-amount" id="finalPension">₱0.00</div>
+						<p>*Includes ₱1,000 additional monthly allowance</p>
+					</div>
+				</div>
+
+			</div>
+			<div class="disclaimer">
+				<h4>⚠️ Important Note</h4>
+				<p>This calculator provides estimates based on the standard SSS pension formulas. For official pension amounts, please consult with SSS directly. Calculations include the additional ₱1,000 monthly allowance for pensioners.</p>
+			</div>
+		</div>
+		
+	</section>
+
+
+
+	<!-- Info Section -->
+	<section class="info">
+		<div class="container">
+			<div class="info-grid">
+				<div class="info-card">
+					<h3>🧮 How It Works</h3>
+					<p>The SSS pension is calculated using three different formulas, and you receive the highest amount among them. Our calculator uses your contribution history and years of service to determine your benefits.</p>
+				</div>
+
+				<div class="info-card">
+					<h3>📈 Maximize Your Pension</h3>
+					<p>To get the highest possible pension, maximize your contributions during the last 5 years before retirement. Your pension is based on your salary credits for this period.</p>
+				</div>
+
+				<div class="info-card">
+					<h3>💡 Additional Benefits</h3>
+					<p>All SSS pensioners receive an additional ₱1,000 monthly allowance on top of their computed pension. This benefit has been in effect since January 2017.</p>
+				</div>
+
+				<div class="info-card">
+					<h3>📋 Requirements</h3>
+					<p>To qualify for SSS pension, you need at least 120 monthly contributions (10 years) with at least 60 contributions in the 10 years immediately before retirement, disability, or death.</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Footer -->
+	<footer class="footer">
+		<div class="container">
+			<p>&copy; 2025 SSS Pension Calculator. This is an unofficial calculator for estimation purposes only.</p>
+		</div>
+	</footer>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			// Smooth scrolling for CTA button
+			$('a[href^="#"]').on('click', function(event) {
+				var target = $(this.getAttribute('href'));
+				if (target.length) {
+					event.preventDefault();
+					$('html, body').stop().animate({
+						scrollTop: target.offset().top - 20
+					}, 1000);
+				}
+			});
+
+			// Form submission and calculation
+			$('#pensionForm').on('submit', function(e) {
+				e.preventDefault();
+				calculatePension();
+			});
+
+			function calculatePension() {
+				// Get contribution values
+				const contributions = [
+					parseFloat($('#year2025').val()) / 12 || 0,
+					parseFloat($('#year2024').val()) / 12 || 0,
+					parseFloat($('#year2023').val()) / 12 || 0,
+					parseFloat($('#year2022').val()) / 12 || 0,
+					parseFloat($('#year2021').val()) / 12 || 0
+				];
+
+				const cys = parseFloat($('#cys').val()) || 0;
+
+				if (cys < 1) {
+					alert('Please enter a valid number of credited years of service.');
+					return;
+				}
+
+				// Calculate AMSC (Average Monthly Salary Credit)
+				const nonZeroContributions = contributions.filter(c => c > 0);
+				if (nonZeroContributions.length === 0) {
+					alert('Please enter at least one contribution amount.');
+					return;
+				}
+
+				//console.log(nonZeroContributions)
+
+				// For simplification, we'll use the average of non-zero contributions
+				// In reality, SSS uses more complex rules for AMSC calculation
+				const amsc = nonZeroContributions.reduce((sum, contrib) => sum + contrib, 0) / nonZeroContributions.length;
+
+				// Formula A: 300 + (20% x AMSC) + (2% x AMSC) x (CYS – 10)
+				let formulaA = 300 + (0.20 * amsc) + (0.02 * amsc) * (cys - 10);
+				formulaA = Math.max(formulaA, 0); // Ensure non-negative
+
+				// Formula B: 40% x AMSC
+				const formulaB = 0.40 * amsc;
+
+				// Formula C: Minimum pension
+				let formulaC;
+				if (cys >= 20) {
+					formulaC = 2400;
+				} else if (cys >= 10) {
+					formulaC = 1200;
+				} else {
+					formulaC = 0; // Not qualified for minimum pension
+				}
+
+				// Get the highest amount
+				const basePension = Math.max(formulaA, formulaB, formulaC);
+
+				// Add additional benefit allowance of ₱1,000
+				const finalPension = basePension + 1000;
+
+				// Display results
+				$('#amscResult').text('₱' + amsc.toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+				$('#formulaA').text('₱' + formulaA.toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+				$('#formulaB').text('₱' + formulaB.toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+				$('#formulaC').text('₱' + formulaC.toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+				$('#finalPension').text('₱' + finalPension.toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+
+				// Show results with animation
+				$('#results').addClass('show');
+
+				// Scroll to results
+				$('html, body').animate({
+					scrollTop: $('#results').offset().top - 20
+				}, 1000);
+			}
+
+			// Add number formatting on input
+			$('input[type="number"]').on('input', function() {
+				if (this.value) {
+					// Remove any existing formatting
+					let value = this.value.replace(/,/g, '');
+					// Add commas for thousands
+					this.value = parseFloat(value).toLocaleString('en-US', {maximumFractionDigits: 2});
+				}
+			});
+
+			// Remove formatting when user focuses on input
+			$('input[type="number"]').on('focus', function() {
+				this.value = this.value.replace(/,/g, '');
+			});
+		});
+	</script>
+</body>
+</html>
